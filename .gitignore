@@ -1,1 +1,5 @@
 TODO
+.vscode
+bin
+obj
+*.db
