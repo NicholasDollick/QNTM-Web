@@ -1,5 +1,5 @@
-using Microsoft.EntityFrameworkCore;
 using QNTM.API.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace QNTM.API.Data
 {
@@ -8,5 +8,6 @@ namespace QNTM.API.Data
         public DataContext(DbContextOptions<DataContext> options) : base(options) {}
 
         public DbSet<Value> Values { get; set; }
+        public DbSet<User> Users { get; set; }
     }
 }
