@@ -7,7 +7,7 @@ namespace QNTM.API.Dtos
         [Required]
         public string Username { get; set; }
         [Required]
-        [StringLength(64, MinimumLength = 6, ErrorMessage = "You Must Use A Password Length Between 6 and 64")]
+        [StringLength(64, MinimumLength = 6, ErrorMessage = "You Must Use A Password At Least 6 Characters Long")]
         public string Password { get; set; }
     }
 }
