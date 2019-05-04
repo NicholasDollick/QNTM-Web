@@ -44,6 +44,8 @@ namespace QNTM.API.Controllers
 
             if (recipient == null)
                 return BadRequest("Could Not Find User");
+
+             throw new System.NotImplementedException();
         }
     }
 }

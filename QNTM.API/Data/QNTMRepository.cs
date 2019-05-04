@@ -13,6 +13,12 @@ namespace QNTM.API.Data
         {
             _context = context;  
         }
+
+        public async Task<User> GetUser(int id)
+        {
+             throw new System.NotImplementedException();
+        }
+        
         public async Task<Message> GetMessage(int id)
         {
             return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
