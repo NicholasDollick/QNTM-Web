@@ -27,5 +27,10 @@ namespace QNTM.API.Data
         {
             throw new System.NotImplementedException();
         }
+
+        public Task<User> GetUser(int id)
+        {
+            throw new System.NotImplementedException();
+        }
     }
 }
