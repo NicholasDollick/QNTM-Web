@@ -9,8 +9,9 @@ namespace QNTM.API.Helpers
         public AutoMapperProfiles()
         {
             CreateMap<User, UserForListDto>();
+            CreateMap<User, UserForDetailDto>();
             CreateMap<UserForRegisterDto, User>();
-            CreateMap<MessageForCreationDto, Message>();
+            CreateMap<MessageForCreationDto, Message>().ReverseMap();
         }
     }
 }

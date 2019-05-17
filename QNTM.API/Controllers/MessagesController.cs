@@ -11,7 +11,7 @@ using QNTM.API.Models;
 namespace QNTM.API.Controllers
 {
     [Authorize]
-    [Route("api/users/{userId}[controller]")]
+    [Route("api/users/{userId}/[controller]")]
     [ApiController]
     public class MessagesController : ControllerBase
     {
@@ -54,8 +54,10 @@ namespace QNTM.API.Controllers
 
             _repo.Add(message);
 
+            var messageToReturn = _mapper.Map<MessageForCreationDto>(message);
+
             if (await _repo.SaveAll())
-                return CreatedAtRoute("GetMessage", new {id = message.Id}, message);
+                return CreatedAtRoute("GetMessage", new {id = message.Id}, messageToReturn);
             
             throw new Exception("Message Failed To Save");
         }
