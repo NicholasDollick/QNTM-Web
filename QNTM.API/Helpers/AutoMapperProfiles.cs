@@ -12,6 +12,7 @@ namespace QNTM.API.Helpers
             CreateMap<User, UserForDetailDto>();
             CreateMap<UserForRegisterDto, User>();
             CreateMap<MessageForCreationDto, Message>().ReverseMap();
+            CreateMap<Message, MessageToReturnDto>();
         }
     }
 }
