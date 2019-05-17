@@ -1,9 +1,12 @@
+using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QNTM.API.Data;
 using QNTM.API.Dtos;
+using QNTM.API.Models;
 
 namespace QNTM.API.Controllers
 {
@@ -13,8 +16,10 @@ namespace QNTM.API.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly IQNTMRepository _repo;
-        public MessagesController(IQNTMRepository repo)
+        private readonly IMapper _mapper;
+        public MessagesController(IQNTMRepository repo, IMapper mapper)
         {
+            _mapper = mapper;
             _repo = repo;
         }
         
@@ -35,9 +40,6 @@ namespace QNTM.API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateMessage(int userId, MessageForCreationDto messageForCreationDto)
         {
-
-            throw new System.NotImplementedException();
-
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
             
@@ -47,6 +49,15 @@ namespace QNTM.API.Controllers
 
             if (recipient == null)
                 return BadRequest("Could Not Find User");
+            
+            var message = _mapper.Map<Message>(messageForCreationDto);
+
+            _repo.Add(message);
+
+            if (await _repo.SaveAll())
+                return CreatedAtRoute("GetMessage", new {id = message.Id}, message);
+            
+            throw new Exception("Message Failed To Save");
         }
     }
 }
