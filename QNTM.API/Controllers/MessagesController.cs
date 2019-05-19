@@ -38,7 +38,7 @@ namespace QNTM.API.Controllers
             
             return Ok(messageFromRepo);
         }
-
+        
         [HttpGet]
         public async Task<IActionResult> GetMessagesForUser(int userId, [FromQuery] MessageParams messageParams)
         {
