@@ -10,6 +10,7 @@ namespace QNTM.API.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
+    #pragma warning disable CS1591
     public class ValuesController : ControllerBase
     {
         // GET api/values
@@ -45,4 +46,5 @@ namespace QNTM.API.Controllers
         {
         }
     }
+    #pragma warning restore CS1591
 }

@@ -15,11 +15,15 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Swashbuckle.AspNetCore.Swagger;
 using QNTM.API.Data;
 using QNTM.API.Hubs;
+using System.Reflection;
+using System.IO;
 
 namespace QNTM.API
 {
+    #pragma warning disable CS1591
     public class Startup
     {
         public Startup(IConfiguration configuration)
@@ -47,6 +51,27 @@ namespace QNTM.API
                     ValidateAudience = false
                 };
             });
+            services.AddSwaggerGen(c => {
+                c.SwaggerDoc("v1", new Info { 
+                    Title = "QNTM API", Version = "v1", 
+                    Description = "A cross platform chat client API",
+                    TermsOfService = "None",
+                    Contact = new Contact 
+                    {
+                        Name = "anon",
+                        Email = "anon@anon.com",
+                        Url = "a url here"
+                    },
+                    License = new License 
+                    { 
+                        Name = "Use Under Test", Url = "url here" 
+                    } 
+                });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -62,9 +87,15 @@ namespace QNTM.API
             }
 
             // app.UseHttpsRedirection();
+            app.UseSwagger();
+            app.UseSwaggerUI(c => {
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "QNTM API v1");
+                c.RoutePrefix = string.Empty;
+            });
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
             app.UseAuthentication();
             app.UseMvc();
         }
     }
+    #pragma warning restore CS1591
 }

@@ -23,8 +23,13 @@ namespace QNTM.API.Controllers
         {
             _config = config;
             _repo = repo;            
-        }
+        }  
 
+
+        /// <summary>
+        /// Creates a new user in database
+        /// </summary>
+        /// <param name="id"></param>
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
