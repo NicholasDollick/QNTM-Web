@@ -51,6 +51,9 @@ namespace QNTM.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
+            if(!await _repo.UserExists(userForLoginDto.Username))
+                return Unauthorized();;
+
             var userFromRepo = await _repo.Login(userForLoginDto.Username, userForLoginDto.Password);
 
             if (userFromRepo == null)
