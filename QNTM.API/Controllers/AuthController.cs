@@ -7,8 +7,10 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using QNTM.API.Data;
 using QNTM.API.Dtos;
+using QNTM.API.Helpers;
 using QNTM.API.Models;
 
 namespace QNTM.API.Controllers
@@ -48,11 +50,35 @@ namespace QNTM.API.Controllers
             return StatusCode(201);
         }
 
+        [HttpPost("verify")]
+        public async Task<IActionResult> Verify([FromBody] string captchaResponse)
+        {
+            if (string.IsNullOrEmpty(captchaResponse))
+            {
+                return Ok(new {result = "invalid"});
+            }
+            
+            var secret = "";
+
+            if (string.IsNullOrEmpty(secret))
+                return Ok(new {result = "invalid"});
+            
+
+            using (var client = new System.Net.WebClient())
+            {
+                var reply = await client.DownloadStringTaskAsync($"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={captchaResponse}");
+                var result = await Task.Run( () => JsonConvert.DeserializeObject<RecaptchaResponse>(reply).Success);
+                if (result)
+                    return Ok(new {result = "valid"});
+            }
+            return Ok(new {result = "invalid"});
+        }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
             if(!await _repo.UserExists(userForLoginDto.Username))
-                return Unauthorized();;
+                return Unauthorized();
 
             var userFromRepo = await _repo.Login(userForLoginDto.Username, userForLoginDto.Password);
 
