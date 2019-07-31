@@ -30,13 +30,14 @@ namespace QNTM.API.Data
             return true;
         }
 
-        public async Task<User> Register(User user, string password)
+        public async Task<User> Register(User user, string password, string publicKey, string keyHash)
         {
             string passwordHash, passwordSalt;
             CreatePasswordHash(password, out passwordHash, out passwordSalt);
-
             user.PasswordHash = passwordHash;
             user.PasswordSalt = passwordSalt;
+            user.PublicKey = publicKey;
+            user.PrivateKeyHash = keyHash;
 
             await _context.AddAsync(user);
             await _context.SaveChangesAsync();

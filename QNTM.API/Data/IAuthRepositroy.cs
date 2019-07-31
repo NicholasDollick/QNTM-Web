@@ -5,7 +5,7 @@ namespace QNTM.API.Data
 {
     public interface IAuthRepositroy
     {
-        Task<User> Register(User user, string password);
+        Task<User> Register(User user, string password, string publicKey, string keyHash);
         Task<User> Login(string username, string password);
         Task<bool> UserExists(string username);
     }

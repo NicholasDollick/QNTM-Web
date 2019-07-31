@@ -45,7 +45,7 @@ namespace QNTM.API.Controllers
                 Username = userForRegisterDto.Username
             };
 
-            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password);
+            var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password, userForRegisterDto.PublicKey, userForRegisterDto.PrivateKeyHash);
 
             return StatusCode(201);
         }
@@ -106,7 +106,7 @@ namespace QNTM.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new { username = userFromRepo.Username, token = tokenHandler.WriteToken(token) });
+            return Ok(new { username = userFromRepo.Username, token = tokenHandler.WriteToken(token), pub = userFromRepo.PublicKey, priv = userFromRepo.PrivateKeyHash });
         }
 
     }

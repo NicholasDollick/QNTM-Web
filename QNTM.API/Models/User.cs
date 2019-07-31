@@ -8,6 +8,8 @@ namespace QNTM.API.Models
         public string Username { get; set; }
         public string PasswordHash { get; set; }
         public string PasswordSalt { get; set; }
+        public string PublicKey { get; set; }
+        public string PrivateKeyHash { get; set; }
         public ICollection<Message> MessagesSent { get; set; }
         public ICollection<Message> MessagesRecieved { get; set; }
     }
