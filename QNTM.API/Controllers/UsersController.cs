@@ -23,6 +23,9 @@ namespace QNTM.API.Controllers
             _repo = repo;
         }
 
+        /// <summary>
+        /// Returns IEnumerable of user data objects, containing the user's unique id and username.
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetUsers()
         {
@@ -33,6 +36,9 @@ namespace QNTM.API.Controllers
             return Ok(usersToReturn);
         }
 
+        /// <summary>
+        /// Returns username and id of user with supplied id.
+        /// </summary>
         [HttpGet("{id}")]
         public async Task<IActionResult> GetUser(int id)
         {

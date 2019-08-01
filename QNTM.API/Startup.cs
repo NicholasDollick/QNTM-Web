@@ -53,19 +53,13 @@ namespace QNTM.API
             });
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info { 
-                    Title = "QNTM API", Version = "v1", 
+                    Title = "QNTM API", Version = "v2", 
                     Description = "A cross platform chat client API",
-                    TermsOfService = "None",
                     Contact = new Contact 
                     {
                         Name = "anon",
-                        Email = "anon@anon.com",
-                        Url = "a url here"
-                    },
-                    License = new License 
-                    { 
-                        Name = "Use Under Test", Url = "url here" 
-                    } 
+                        Email = "anon@anon.com"
+                    }
                 });
 
                 var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";

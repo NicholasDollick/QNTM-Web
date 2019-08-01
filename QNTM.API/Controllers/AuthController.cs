@@ -31,7 +31,6 @@ namespace QNTM.API.Controllers
         /// <summary>
         /// Creates a new user in database
         /// </summary>
-        /// <param name="id"></param>
         [HttpPost("register")]
         public async Task<IActionResult> Register(UserForRegisterDto userForRegisterDto)
         {
@@ -50,6 +49,21 @@ namespace QNTM.API.Controllers
             return StatusCode(201);
         }
 
+        /// <summary>
+        /// Checks if provided username already exists in database
+        /// </summary>
+        [HttpPost("exists")]
+        public async Task<IActionResult> Exists(UserForCheckingDto userForCheckingDto)
+        {
+            if(await _repo.UserExists(userForCheckingDto.Username))
+                return Ok(new {result = true});
+            
+            return Ok(new { result = false });
+        }
+
+        /// <summary>
+        /// Verifies solved captcha token with google's recaptcha api to confirm validity.
+        /// </summary>
         [HttpPost("verify")]
         public async Task<IActionResult> Verify([FromBody] string captchaResponse)
         {
@@ -74,6 +88,9 @@ namespace QNTM.API.Controllers
             return Ok(new {result = "invalid"});
         }
 
+        /// <summary>
+        /// Verifies supplied credentials and returns authorized token and user's details
+        /// </summary>
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {

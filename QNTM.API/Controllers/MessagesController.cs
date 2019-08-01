@@ -25,6 +25,9 @@ namespace QNTM.API.Controllers
             _repo = repo;
         }
         
+        /// <summary>
+        /// Returns single message of provided id from authorized user
+        /// </summary>
         [HttpGet("{id}", Name="GetMessage")]
         public async Task<IActionResult> GetMessage(int userId, int id)
         {
@@ -39,6 +42,9 @@ namespace QNTM.API.Controllers
             return Ok(messageFromRepo);
         }
         
+        /// <summary>
+        /// Returns all messages from authorized user
+        /// </summary>
         [HttpGet]
         public async Task<IActionResult> GetMessagesForUser(int userId, [FromQuery] MessageParams messageParams)
         {
@@ -57,6 +63,9 @@ namespace QNTM.API.Controllers
             return Ok(messages);
         }
 
+        /// <summary>
+        /// Returns all messaged between authorized user and user of provided id
+        /// </summary>
         [HttpGet("thread/{recipientId}")]
         public async Task<IActionResult> GetMessageThread(int userId, int recipientId)
         {
@@ -70,6 +79,9 @@ namespace QNTM.API.Controllers
             return Ok(messageThread);
         }
 
+        /// <summary>
+        /// Creates a new message instance
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> CreateMessage(int userId, MessageForCreationDto messageForCreationDto)
         {
@@ -95,6 +107,9 @@ namespace QNTM.API.Controllers
             throw new Exception("Message Failed To Save");
         }
 
+        /// <summary>
+        /// Marks message with provided index as read
+        /// </summary>
         [HttpPost("{id}/read")]
         public async Task<IActionResult> MarkMessageAsRead(int userId, int id)
         {
