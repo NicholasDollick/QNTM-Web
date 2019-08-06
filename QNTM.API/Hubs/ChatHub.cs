@@ -10,5 +10,11 @@ namespace QNTM.API.Hubs
         {
             await Clients.All.SendAsync("RecievedMessage", user, message);
         }
+
+
+        public void SendToAll(string name, string message)
+        {
+            Clients.All.SendAsync("sendToAll", name, message);
+        }
     }
 }
