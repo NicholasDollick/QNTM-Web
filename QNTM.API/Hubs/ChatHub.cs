@@ -16,5 +16,10 @@ namespace QNTM.API.Hubs
         {
             Clients.All.SendAsync("sendToAll", name, message);
         }
+
+        public void ChatMessages(string jsonData)
+        {
+            Clients.All.SendAsync("chatMessages", jsonData);
+        }
     }
 }
