@@ -10,6 +10,7 @@ namespace QNTM.API.Models
         public string PasswordSalt { get; set; }
         public string PublicKey { get; set; }
         public string PrivateKeyHash { get; set; }
+        public ICollection<Photo> Photos { get; set; }
         public ICollection<Message> MessagesSent { get; set; }
         public ICollection<Message> MessagesRecieved { get; set; }
     }

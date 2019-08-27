@@ -24,7 +24,6 @@ namespace QNTM.API.Data
         {
             return await _context.Messages.FirstOrDefaultAsync(m => m.Id == id);
         }
-
         public async Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams)
         {
             var messages = _context.Messages.Include(u => u.Sender).Include(u => u.Recipient).AsQueryable();
@@ -45,6 +44,13 @@ namespace QNTM.API.Data
             messages = messages.OrderByDescending(d => d.MessageSent);
 
             return await PagedList<Message>.CreateAsync(messages, messageParams.PageNumber, messageParams.PageSize);
+        }
+
+        public async Task<Photo> GetPhoto(int id)
+        {
+            var photo = await _context.Photos.FirstOrDefaultAsync(p => p.Id == id);
+
+            return photo;
         }
 
         public async Task<User> GetUser(int id)
