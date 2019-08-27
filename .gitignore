@@ -3,3 +3,7 @@ TODO
 bin
 obj
 *.db
+/QNTN.API/appsettings.json
+/QNTN.API/appsettings.Development.json
+QNTN.API/appsettings.json
+QNTN.API/appsettings.Development.json

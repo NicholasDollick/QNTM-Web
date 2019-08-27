@@ -20,6 +20,7 @@ using QNTM.API.Data;
 using QNTM.API.Hubs;
 using System.Reflection;
 using System.IO;
+using QNTM.API.Helpers;
 
 namespace QNTM.API
 {
@@ -67,6 +68,7 @@ namespace QNTM.API
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+            services.Configure<CloudinarySettings>(Configuration.GetSection("CloudinarySettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -87,7 +89,7 @@ namespace QNTM.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "QNTM API v1");
                 c.RoutePrefix = string.Empty;
             });
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:4200"));
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200"));
             app.UseAuthentication();
             app.UseSignalR(routes => {
                 routes.MapHub<ChatHub>("/chat");
