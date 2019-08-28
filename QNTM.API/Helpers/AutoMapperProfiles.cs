@@ -1,3 +1,4 @@
+using System.Linq;
 using AutoMapper;
 using QNTM.API.Dtos;
 using QNTM.API.Models;
@@ -8,8 +9,16 @@ namespace QNTM.API.Helpers
     {
         public AutoMapperProfiles()
         {
-            CreateMap<User, UserForChatDto>();
-            CreateMap<User, UserForDetailDto>();
+            CreateMap<User, UserForChatDto>().ForMember(
+                dest => dest.PhotoUrl, opt => {
+                    opt.MapFrom(src => src.Photos.FirstOrDefault(p => p.IsMain).Url);
+                }
+            );
+            CreateMap<User, UserForDetailDto>().ForMember(
+                dest => dest.PhotoUrl, opt => {
+                    opt.MapFrom(src => src.Photos.FirstOrDefault(p => p.IsMain).Url);
+                }
+            );
             CreateMap<UserForRegisterDto, User>();
             CreateMap<MessageForCreationDto, Message>().ReverseMap();
             CreateMap<Message, MessageToReturnDto>();
