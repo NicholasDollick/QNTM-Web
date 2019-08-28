@@ -9,8 +9,8 @@ using QNTM.API.Data;
 namespace QNTM.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190406080241_MessageEntityAdded")]
-    partial class MessageEntityAdded
+    [Migration("20190828001930_ReCreatingTable")]
+    partial class ReCreatingTable
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -46,6 +46,26 @@ namespace QNTM.API.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("QNTM.API.Models.Photo", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("Desc");
+
+                    b.Property<string>("PublicId");
+
+                    b.Property<string>("Url");
+
+                    b.Property<int>("UserId");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Photos");
+                });
+
             modelBuilder.Entity("QNTM.API.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -54,6 +74,10 @@ namespace QNTM.API.Migrations
                     b.Property<string>("PasswordHash");
 
                     b.Property<string>("PasswordSalt");
+
+                    b.Property<string>("PrivateKeyHash");
+
+                    b.Property<string>("PublicKey");
 
                     b.Property<string>("Username");
 
@@ -85,6 +109,14 @@ namespace QNTM.API.Migrations
                         .WithMany("MessagesSent")
                         .HasForeignKey("SenderId")
                         .OnDelete(DeleteBehavior.Restrict);
+                });
+
+            modelBuilder.Entity("QNTM.API.Models.Photo", b =>
+                {
+                    b.HasOne("QNTM.API.Models.User", "User")
+                        .WithMany("Photos")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 #pragma warning restore 612, 618
         }

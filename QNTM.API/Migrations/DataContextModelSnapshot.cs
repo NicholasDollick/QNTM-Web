@@ -61,7 +61,7 @@ namespace QNTM.API.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Photo");
+                    b.ToTable("Photos");
                 });
 
             modelBuilder.Entity("QNTM.API.Models.User", b =>

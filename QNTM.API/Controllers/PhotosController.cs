@@ -56,7 +56,7 @@ namespace QNTM.API.Controllers
         /// Uploads photo to Cloudinary for storage. If successful, the url to access the photo gets returned and related to photo in database.
         /// </summary>
         [HttpPost]
-        public async Task<IActionResult> addPhotoForUser(int userId, PhotoForCreationDto photoForCreationDto)
+        public async Task<IActionResult> addPhotoForUser(int userId, [FromForm]PhotoForCreationDto photoForCreationDto)
         {
             if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
                 return Unauthorized();
