@@ -33,7 +33,7 @@ namespace QNTM.API.Controllers
         {
             var users = await _repo.GetUsers();
 
-            var usersToReturn = _mapper.Map<IEnumerable<UserForListDto>>(users);
+            var usersToReturn = _mapper.Map<IEnumerable<UserForChatDto>>(users);
 
             return Ok(usersToReturn);
         }

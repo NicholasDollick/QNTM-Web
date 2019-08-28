@@ -86,6 +86,9 @@ namespace QNTM.API.Controllers
 
             var photo = _mapper.Map<Photo>(photoForCreationDto);
 
+            if(!userFromRepo.Photos.Any(u => u.IsMain))
+                photo.IsMain = true;
+
             userFromRepo.Photos.Add(photo);
 
             if (await _repo.SaveAll())
@@ -95,6 +98,33 @@ namespace QNTM.API.Controllers
             }
 
             return BadRequest("Could Not Add Photo");
+        }
+
+        [HttpPost("{id}/setMain")]
+        public async Task<IActionResult> SetMainPhoto(int userId, int id)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+            
+            var userFromRepo = await _repo.GetUser(userId);
+
+            if(!userFromRepo.Photos.Any(p => p.Id == id))
+                return Unauthorized();
+            
+            var photoFromRepo = await _repo.GetPhoto(id);
+
+            if (photoFromRepo.IsMain)
+                return BadRequest("Photo is already set to main");
+            
+            var currentMainPhoto = await _repo.GetMainPhotoForUser(userId);
+            currentMainPhoto.IsMain = false;
+
+            photoFromRepo.IsMain = true;
+
+            if (await _repo.SaveAll())
+                return NoContent();
+
+            return BadRequest("Could Not Set Photo To Main");
         }
     }
 }

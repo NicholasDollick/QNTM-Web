@@ -12,6 +12,7 @@ namespace QNTM.API.Data
         Task<User> GetUser(int id);
         Task<IEnumerable<User>> GetUsers();
         Task<Photo> GetPhoto(int id);
+        Task<Photo> GetMainPhotoForUser(int userId);
         Task<Message> GetMessage(int id);
         Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams);
         Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId);

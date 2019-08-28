@@ -3,6 +3,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -21,11 +22,13 @@ namespace QNTM.API.Controllers
     {
         private readonly IAuthRepositroy _repo;
         private readonly IConfiguration _config;
-        public AuthController(IAuthRepositroy repo, IConfiguration config)
+        private readonly IMapper _mapper;
+        public AuthController(IAuthRepositroy repo, IConfiguration config, IMapper mapper)
         {
+            _mapper = mapper;
             _config = config;
-            _repo = repo;            
-        }  
+            _repo = repo;
+        }
 
 
         /// <summary>
@@ -55,9 +58,9 @@ namespace QNTM.API.Controllers
         [HttpPost("exists")]
         public async Task<IActionResult> Exists(UserForCheckingDto userForCheckingDto)
         {
-            if(await _repo.UserExists(userForCheckingDto.Username))
-                return Ok(new {result = true});
-            
+            if (await _repo.UserExists(userForCheckingDto.Username))
+                return Ok(new { result = true });
+
             return Ok(new { result = false });
         }
 
@@ -69,23 +72,23 @@ namespace QNTM.API.Controllers
         {
             if (string.IsNullOrEmpty(captchaResponse))
             {
-                return Ok(new {result = "invalid"});
+                return Ok(new { result = "invalid" });
             }
-            
+
             var secret = "";
 
             if (string.IsNullOrEmpty(secret))
-                return Ok(new {result = "invalid"});
-            
+                return Ok(new { result = "invalid" });
+
 
             using (var client = new System.Net.WebClient())
             {
                 var reply = await client.DownloadStringTaskAsync($"https://www.google.com/recaptcha/api/siteverify?secret={secret}&response={captchaResponse}");
-                var result = await Task.Run( () => JsonConvert.DeserializeObject<RecaptchaResponse>(reply).Success);
+                var result = await Task.Run(() => JsonConvert.DeserializeObject<RecaptchaResponse>(reply).Success);
                 if (result)
-                    return Ok(new {result = "valid"});
+                    return Ok(new { result = "valid" });
             }
-            return Ok(new {result = "invalid"});
+            return Ok(new { result = "invalid" });
         }
 
         /// <summary>
@@ -94,22 +97,22 @@ namespace QNTM.API.Controllers
         [HttpPost("login")]
         public async Task<IActionResult> Login(UserForLoginDto userForLoginDto)
         {
-            if(!await _repo.UserExists(userForLoginDto.Username))
+            if (!await _repo.UserExists(userForLoginDto.Username))
                 return Unauthorized();
 
             var userFromRepo = await _repo.Login(userForLoginDto.Username, userForLoginDto.Password);
 
             if (userFromRepo == null)
                 return Unauthorized();
-            
-            var claims = new []
+
+            var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
                 new Claim(ClaimTypes.Name, userFromRepo.Username)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
-            
+
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha512Signature);
 
             var tokenDescriptor = new SecurityTokenDescriptor
@@ -123,7 +126,9 @@ namespace QNTM.API.Controllers
 
             var token = tokenHandler.CreateToken(tokenDescriptor);
 
-            return Ok(new { username = userFromRepo.Username, token = tokenHandler.WriteToken(token), pub = userFromRepo.PublicKey, priv = userFromRepo.PrivateKeyHash });
+            var user = _mapper.Map<UserForChatDto>(userFromRepo);
+
+            return Ok(new { token = tokenHandler.WriteToken(token), user, priv = userFromRepo.PrivateKeyHash });
         }
 
     }
