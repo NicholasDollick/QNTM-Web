@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace QNTM.API.Migrations
 {
-    public partial class ReCreatingTable : Migration
+    public partial class FixedDbRelations : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -77,7 +77,8 @@ namespace QNTM.API.Migrations
                     Url = table.Column<string>(nullable: true),
                     Desc = table.Column<string>(nullable: true),
                     UserId = table.Column<int>(nullable: false),
-                    PublicId = table.Column<string>(nullable: true)
+                    PublicId = table.Column<string>(nullable: true),
+                    IsMain = table.Column<bool>(nullable: false)
                 },
                 constraints: table =>
                 {

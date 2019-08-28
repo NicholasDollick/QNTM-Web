@@ -9,8 +9,8 @@ using QNTM.API.Data;
 namespace QNTM.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190828014028_ControlVarForMainPhoto")]
-    partial class ControlVarForMainPhoto
+    [Migration("20190828075223_ChangedModelToLinkPhotos")]
+    partial class ChangedModelToLinkPhotos
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {

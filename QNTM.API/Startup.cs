@@ -93,7 +93,7 @@ namespace QNTM.API
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "QNTM API v1");
                 c.RoutePrefix = string.Empty;
             });
-            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().WithOrigins("http://localhost:4200"));
+            app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:4200"));
             app.UseAuthentication();
             app.UseSignalR(routes => {
                 routes.MapHub<ChatHub>("/chat");

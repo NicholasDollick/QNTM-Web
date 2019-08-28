@@ -9,8 +9,8 @@ using QNTM.API.Data;
 namespace QNTM.API.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20190828001930_ReCreatingTable")]
-    partial class ReCreatingTable
+    [Migration("20190828082435_FixedDbRelations")]
+    partial class FixedDbRelations
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -52,6 +52,8 @@ namespace QNTM.API.Migrations
                         .ValueGeneratedOnAdd();
 
                     b.Property<string>("Desc");
+
+                    b.Property<bool>("IsMain");
 
                     b.Property<string>("PublicId");
 
