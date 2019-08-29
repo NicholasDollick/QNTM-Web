@@ -54,7 +54,7 @@ namespace QNTM.API.Controllers
         /// <summary>
         /// Updates the data of a user in the database
         /// </summary>
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
         {
             if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
