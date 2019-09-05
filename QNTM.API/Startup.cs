@@ -20,9 +20,9 @@ using QNTM.API.Data;
 using QNTM.API.Hubs;
 using System.Reflection;
 using System.IO;
-using QNTM.API.Helpers;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Primitives;
+using QNTM.API.Helpers;
 
 namespace QNTM.API
 {
@@ -50,6 +50,7 @@ namespace QNTM.API
             services.AddSignalR();
             services.AddScoped<IAuthRepositroy, AuthRepository>();
             services.AddScoped<IQNTMRepository, QNTMRepository>();
+            services.AddScoped<IUserHandler, Data.UserHandler>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
@@ -59,6 +60,7 @@ namespace QNTM.API
                     ValidateAudience = false
                 };
                 options.SaveToken = true;
+                
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context => {
@@ -74,6 +76,7 @@ namespace QNTM.API
                         return Task.CompletedTask;
                     }
                 };
+                
             });
             services.AddSwaggerGen(c => {
                 c.SwaggerDoc("v1", new Info { 

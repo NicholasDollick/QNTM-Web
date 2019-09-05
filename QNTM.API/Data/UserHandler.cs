@@ -1,17 +1,23 @@
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using QNTM.API.Models;
 
-namespace QNTM.API.Helpers
+namespace QNTM.API.Data
 {
-    public class UserHandler
+    public class UserHandler : IUserHandler
     {
-        private ConcurrentDictionary<string, ChatUserData> _onlineUsers { get; set; } = new ConcurrentDictionary<string, ChatUserData>();
+        private ConcurrentDictionary<string, ChatUserData> _onlineUsers { get; set; }
 
+        public void InitDict()
+        {
+           _onlineUsers = new ConcurrentDictionary<string, ChatUserData>();
+        }
         public bool UpdateDict (string name, string connectionId)
         {
             var userIsOnline = _onlineUsers.ContainsKey(name);
+            Console.WriteLine(userIsOnline);
 
             var userData = new ChatUserData
             {
@@ -20,6 +26,11 @@ namespace QNTM.API.Helpers
             };
 
             _onlineUsers.AddOrUpdate(name, userData, (key, value) => userData);
+            foreach (var item in _onlineUsers)
+            {
+                Console.WriteLine(item.Key);
+                Console.WriteLine(item.Value);
+            }
 
             return userIsOnline;
         }
