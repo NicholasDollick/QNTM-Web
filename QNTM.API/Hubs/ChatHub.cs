@@ -1,12 +1,29 @@
 using System;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using QNTM.API.Data;
+using QNTM.API.Helpers;
 
 namespace QNTM.API.Hubs
 {
     public class ChatHub : Hub
     {
+        /* 
+        public override Task OnConnectedAsync()
+        {
+            UserHandler.ConnectionIds.Add(Context.ConnectionId);
+            return base.OnConnectedAsync();
+        }
+
+        public override Task OnDisconnectedAsync(Exception exception)
+        {
+            UserHandler.ConnectionIds.Remove(Context.ConnectionId);
+            return base.OnDisconnectedAsync(exception);
+        }
+
+        */
+
         public async Task SendMessage(string user, string message)
         {
             await Clients.All.SendAsync("RecievedMessage", user, message);
@@ -28,10 +45,17 @@ namespace QNTM.API.Hubs
         public Task SendPrivateMessage(string user, string message)
         {
             Console.WriteLine(user);
-            Console.WriteLine(Context.User.Identity);
             Console.WriteLine(Context.ConnectionId);
-            // Console.WriteLine(ConnectedUse);
-            return Clients.User(user).SendAsync("RecievedMessage", message);
+            Console.WriteLine(Clients.User(user));
+            Console.WriteLine(Clients.User(userId: user));
+            Console.WriteLine(Clients.User(userId: Context.ConnectionId));
+            return Clients.User("1").SendAsync("PrivateMessage", message);
+        }
+
+        public void SendPm (string toUser, string message)
+        {
+            string fromUser = Context.ConnectionId;
+
         }
 
         // Code for "groups"

@@ -21,6 +21,7 @@ using QNTM.API.Hubs;
 using System.Reflection;
 using System.IO;
 using QNTM.API.Helpers;
+using Microsoft.AspNetCore.SignalR;
 
 namespace QNTM.API
 {
@@ -55,6 +56,21 @@ namespace QNTM.API
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(Configuration.GetSection("AppSettings:Token").Value)),
                     ValidateIssuer = false,
                     ValidateAudience = false
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context => {
+                        var accessToken = context.Request.Query["access_token"];
+
+                        var path = context.HttpContext.Request.Path;
+
+                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+                        {
+                            context.Token = accessToken;
+                        }
+                        return Task.CompletedTask;
+                    }
                 };
             });
             services.AddSwaggerGen(c => {
@@ -97,6 +113,7 @@ namespace QNTM.API
             app.UseAuthentication();
             app.UseSignalR(routes => {
                 routes.MapHub<ChatHub>("/chat");
+                routes.MapHub<PrivateMessageHub>("/pm");
             });
             app.UseMvc();
         }
