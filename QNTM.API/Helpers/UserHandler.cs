@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Linq;
 using QNTM.API.Models;
 
 namespace QNTM.API.Helpers
@@ -27,6 +28,19 @@ namespace QNTM.API.Helpers
         {
             ChatUserData userData;
             _onlineUsers.TryRemove(name, out userData);
+        }
+
+        // returns all users except for the user that made the request
+        public IEnumerable<ChatUserData> GetAllOtherUsers(string name)
+        {
+            return _onlineUsers.Values.Where(user => user.Username != name);
+        }
+
+        public ChatUserData GetUserData(string name)
+        {
+            ChatUserData user;
+            _onlineUsers.TryGetValue(name, out user);
+            return user;
         }
     }
 }
