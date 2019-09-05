@@ -22,6 +22,7 @@ using System.Reflection;
 using System.IO;
 using QNTM.API.Helpers;
 using Microsoft.AspNetCore.SignalR;
+using Microsoft.Extensions.Primitives;
 
 namespace QNTM.API
 {
@@ -57,18 +58,19 @@ namespace QNTM.API
                     ValidateIssuer = false,
                     ValidateAudience = false
                 };
-
+                options.SaveToken = true;
                 options.Events = new JwtBearerEvents
                 {
                     OnMessageReceived = context => {
-                        var accessToken = context.Request.Query["access_token"];
-
-                        var path = context.HttpContext.Request.Path;
-
-                        if (!string.IsNullOrEmpty(accessToken) && path.StartsWithSegments("/hubs/chat"))
+                        if ( (context.Request.Path.Value.StartsWith("/hubs")) 
+                            || (context.Request.Path.Value.StartsWith("/pm")) 
+                            && context.Request.Query.TryGetValue("token", out StringValues token))
                         {
-                            context.Token = accessToken;
+                            context.Token = token;
                         }
+                        return Task.CompletedTask;
+                    }, OnAuthenticationFailed = context => {
+                        var ex = context.Exception;
                         return Task.CompletedTask;
                     }
                 };
@@ -106,7 +108,7 @@ namespace QNTM.API
             // app.UseHttpsRedirection();
             app.UseSwagger();
             app.UseSwaggerUI(c => {
-                c.SwaggerEndpoint("/swagger/v1/swagger.json", "QNTM API v1");
+                c.SwaggerEndpoint("/swagger/v1/swagger.json", "QNTM API v2");
                 c.RoutePrefix = string.Empty;
             });
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:4200"));

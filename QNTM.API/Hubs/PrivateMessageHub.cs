@@ -1,11 +1,13 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using QNTM.API.Helpers;
 
 namespace QNTM.API.Hubs
 {
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class PrivateMessageHub : Hub
     {
         private UserHandler _userHandler;   
