@@ -17,7 +17,6 @@ namespace QNTM.API.Hubs
         public PrivateMessageHub(IUserHandler userHandler)
         {
             _userHandler = userHandler;
-            _userHandler.InitDict();
         }
 
         public async Task Leave()
@@ -43,6 +42,7 @@ namespace QNTM.API.Hubs
                 {
                     Console.WriteLine(item.Username);
                 }
+                Console.WriteLine(_userHandler.GetDictSize());
                 Console.WriteLine("Done...");
                 await Clients.AllExcept(new List<string> { Context.ConnectionId }).SendAsync("Now Online", Context.User.Identity.Name);
             } else {}
@@ -57,6 +57,8 @@ namespace QNTM.API.Hubs
             Console.WriteLine(Context.User.Identity.Name);
             var userFrom = _userHandler.GetUserData(Context.User.Identity.Name);
             var sendToUser = _userHandler.GetUserData(toUser);
+            Console.WriteLine(sendToUser.Username);
+            Console.WriteLine(sendToUser.ConnectionId);
             return Clients.Client(sendToUser.ConnectionId).SendAsync("SendPm", message, userFrom);
         }
     }

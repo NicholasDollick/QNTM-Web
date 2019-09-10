@@ -9,6 +9,6 @@ namespace QNTM.API.Data
         void RemoveFromDict(string name);
         IEnumerable<ChatUserData> GetAllOtherUsers(string name);
         ChatUserData GetUserData(string name);
-        void InitDict();
+        int GetDictSize();
     }
 }

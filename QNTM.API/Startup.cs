@@ -50,7 +50,9 @@ namespace QNTM.API
             services.AddSignalR();
             services.AddScoped<IAuthRepositroy, AuthRepository>();
             services.AddScoped<IQNTMRepository, QNTMRepository>();
-            services.AddScoped<IUserHandler, Data.UserHandler>();
+            services.AddScoped<IUserHandler, UserHandler>();
+            // services.AddSingleton<UserHandler>();
+            services.AddSingleton<OnlineUsers>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(options => {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
