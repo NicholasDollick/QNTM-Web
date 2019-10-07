@@ -60,6 +60,14 @@ namespace QNTM.API.Data
             return user;
         }       
 
+        public async Task<User> GetUser(string username)
+        {
+            // usernames are unique, so lowercasing both queries removes uncertainty from end user's typing.
+            var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
+
+            return user;
+        }
+
         public async Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId)
         {
             var messages = await _context.Messages.Include(u => u.Sender)
@@ -87,5 +95,6 @@ namespace QNTM.API.Data
         {
             return await _context.Photos.Where(u => u.UserId == userId).FirstOrDefaultAsync(p => p.IsMain);
         }
+
     }
 }

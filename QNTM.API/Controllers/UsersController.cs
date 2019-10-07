@@ -52,6 +52,36 @@ namespace QNTM.API.Controllers
         }
 
         /// <summary>
+        /// Returns username and id of user with supplied username.
+        /// </summary>
+        [HttpGet("find/{id}")]
+        public async Task<IActionResult> GetUser(string id)
+        {
+            var user = await _repo.GetUser(id);
+
+            var userToReturn = _mapper.Map<UserForDetailDto>(user);
+
+            return Ok(userToReturn);
+        }
+
+        /// <summary>
+        /// Returns a list of all active chats the logged in user has.
+        /// </summary>
+        [HttpGet("{id}/active")]
+        public async Task<IActionResult> GetUserActiveChats(int id)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var user = await _repo.GetUser(id);
+
+            var userToReturn = _mapper.Map<UserForDetailDto>(user);
+
+            return Ok(user);
+        }
+
+
+        /// <summary>
         /// Updates the data of a user in the database
         /// </summary>
         [HttpPut("{id}")]

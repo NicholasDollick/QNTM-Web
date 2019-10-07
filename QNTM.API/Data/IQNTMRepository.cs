@@ -10,6 +10,7 @@ namespace QNTM.API.Data
         void Add<T>(T entity) where T: class;
         Task<bool> SaveAll();
         Task<User> GetUser(int id);
+        Task<User> GetUser(string username);
         Task<IEnumerable<User>> GetUsers();
         Task<Photo> GetPhoto(int id);
         Task<Photo> GetMainPhotoForUser(int userId);
