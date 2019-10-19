@@ -10,6 +10,11 @@
           "isMain": true,
           "description": "Laboris sint exercitation est quis enim est."
         }
-      ]
+      ],
+      "ActiveChats": [{
+        "id": 3,
+        "username": "Timmy Talons",
+        "photourl": "https://randomuser.me/api/portraits/women/61.jpg"
+      }]
     }
   ]

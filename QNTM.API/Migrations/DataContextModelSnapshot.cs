@@ -16,6 +16,24 @@ namespace QNTM.API.Migrations
             modelBuilder
                 .HasAnnotation("ProductVersion", "2.1.4-rtm-31024");
 
+            modelBuilder.Entity("QNTM.API.Models.ActiveChat", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd();
+
+                    b.Property<string>("PhotoUrl");
+
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("Username");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ActiveChats");
+                });
+
             modelBuilder.Entity("QNTM.API.Models.Message", b =>
                 {
                     b.Property<int>("Id")
@@ -96,6 +114,14 @@ namespace QNTM.API.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Values");
+                });
+
+            modelBuilder.Entity("QNTM.API.Models.ActiveChat", b =>
+                {
+                    b.HasOne("QNTM.API.Models.User", "User")
+                        .WithMany("ActiveChats")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("QNTM.API.Models.Message", b =>

@@ -2,7 +2,7 @@
 
 namespace QNTM.API.Migrations
 {
-    public partial class ChangedModelToLinkPhotos : Migration
+    public partial class AddingRelationship : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {

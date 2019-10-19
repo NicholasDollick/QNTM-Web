@@ -15,7 +15,7 @@ namespace QNTM.API.Data
         
         public async Task<User> Login(string username, string password)
         {
-            var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(x => x.Username == username);
+            var user = await _context.Users.Include(p => p.Photos).Include(c => c.ActiveChats).FirstOrDefaultAsync(x => x.Username == username);
 
             if(!VerifyPasswordHash(password, user.PasswordHash))
                 return null;

@@ -13,6 +13,6 @@ namespace QNTM.API.Models
         public ICollection<Photo> Photos { get; set; }
         public ICollection<Message> MessagesSent { get; set; }
         public ICollection<Message> MessagesRecieved { get; set; }
-        // public ChatUserData ChatInfo { get; set; }
+        public ICollection<ActiveChat> ActiveChats { get; set; }
     }
 }

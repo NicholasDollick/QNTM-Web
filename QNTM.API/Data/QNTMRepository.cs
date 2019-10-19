@@ -96,5 +96,18 @@ namespace QNTM.API.Data
             return await _context.Photos.Where(u => u.UserId == userId).FirstOrDefaultAsync(p => p.IsMain);
         }
 
+        public async Task<IEnumerable<ActiveChat>> GetActiveChats(int userId)
+        {
+            var chats = await _context.ActiveChats.Where(m => m.UserId == userId).ToListAsync();
+            
+            return chats;
+        }
+
+        public async Task<ActiveChat> GetChat(int id)
+        {
+            var chat = await _context.ActiveChats.FirstOrDefaultAsync(c => c.Id == id);
+
+            return chat;
+        }
     }
 }

@@ -22,6 +22,8 @@ namespace QNTM.API.Helpers
             CreateMap<UserForRegisterDto, User>();
             CreateMap<MessageForCreationDto, Message>().ReverseMap();
             CreateMap<Message, MessageToReturnDto>();
+            CreateMap<UserForUpdateDto, User>();
+            CreateMap<ChatForCreationDto, ActiveChat>();
             CreateMap<PhotoForCreationDto, Photo>();
             CreateMap<Photo, PhotoForReturnDto>();
         }
