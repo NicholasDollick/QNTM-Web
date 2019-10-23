@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using QNTM.API.Data;
 using QNTM.API.Dtos;
+using QNTM.API.Models;
 
 namespace QNTM.API.Controllers
 {
@@ -44,7 +45,27 @@ namespace QNTM.API.Controllers
             var activeChats = _mapper.Map<IEnumerable<ChatForCreationDto>>(chatFromRepo);
 
             return Ok(activeChats);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> addActiveChat(int userId, [FromBody]ChatForCreationDto chatForCreationDto)
+        {
+            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
             
+            var userFromRepo = await _repo.GetUser(userId);
+
+            var chat = _mapper.Map<ActiveChat>(chatForCreationDto);
+
+            userFromRepo.ActiveChats.Add(chat);
+
+            if (await _repo.SaveAll())
+            {
+                var chatToReturn = _mapper.Map<ChatForCreationDto>(chat);
+                return CreatedAtRoute("GetChat", new { id = chat.Id }, chatToReturn);
+            }
+
+            return BadRequest("Could not save chat");
         }
 
 

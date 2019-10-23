@@ -48,7 +48,7 @@ namespace QNTM.API.Controllers
 
             var userToReturn = _mapper.Map<UserForDetailDto>(user);
 
-            return Ok(userToReturn);
+            return Ok(user);
         }
 
         /// <summary>

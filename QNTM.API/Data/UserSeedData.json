@@ -11,10 +11,22 @@
           "description": "Laboris sint exercitation est quis enim est."
         }
       ],
-      "ActiveChats": [{
+      "ActiveChats": [
+        {
         "id": 3,
         "username": "Timmy Talons",
         "photourl": "https://randomuser.me/api/portraits/women/61.jpg"
-      }]
+        }, 
+        {
+          "id": 1,
+          "username": "Timmy Toes",
+          "photourl": "https://randomuser.me/api/portraits/men/61.jpg"
+        },
+        {
+          "id": 4,
+          "username": "Henry Hooves",
+          "photourl": "https://randomuser.me/api/portraits/women/50.jpg"
+        }
+    ]
     }
   ]
