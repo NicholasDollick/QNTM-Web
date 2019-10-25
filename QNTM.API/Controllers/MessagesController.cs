@@ -107,29 +107,6 @@ namespace QNTM.API.Controllers
             throw new Exception("Message Failed To Save");
         }
 
-        [HttpPost("newchat")]
-        public async Task<IActionResult> CreateNewChat(int userId, [FromBody]ChatForCreationDto chatForCreationDto)
-        {
-            Console.WriteLine("CALL MADE IT HERE");
-
-            if (userId != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-            
-            var userFromRepo = await _repo.GetUser(userId);
-            
-            var chatDetails = _mapper.Map<ActiveChat>(chatForCreationDto);
-
-            userFromRepo.ActiveChats.Add(chatDetails);
-            
-            if (await _repo.SaveAll())
-            {
-                return Ok();
-            }
-
-            // throw new Exception();
-            return NoContent();
-        }
-
         /// <summary>
         /// Marks message with provided index as read
         /// </summary>

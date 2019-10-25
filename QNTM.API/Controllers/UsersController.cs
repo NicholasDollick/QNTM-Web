@@ -65,22 +65,6 @@ namespace QNTM.API.Controllers
         }
 
         /// <summary>
-        /// Returns a list of all active chats the logged in user has.
-        /// </summary>
-        [HttpGet("{id}/active")]
-        public async Task<IActionResult> GetUserActiveChats(int id)
-        {
-            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-
-            var user = await _repo.GetUser(id);
-
-            var userToReturn = _mapper.Map<UserForDetailDto>(user);
-
-            return Ok(userToReturn);
-        }
-
-        /// <summary>
         /// Returns an updated user model for the currently logged in user. For use after db context updating actions.
         /// </summary>
         [HttpGet("{id}/update")]
@@ -94,25 +78,6 @@ namespace QNTM.API.Controllers
             var userToReturn = _mapper.Map<UserForChatDto>(user);
 
             return Ok(userToReturn);
-        }
-
-        /// <summary>
-        /// Updates the data of a user in the database
-        /// </summary>
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateUser(int id, UserForUpdateDto userForUpdateDto)
-        {
-            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
-                return Unauthorized();
-            
-            var userFromRepo = await _repo.GetUser(id);
-
-            _mapper.Map(userForUpdateDto, userFromRepo);
-
-            if(await _repo.SaveAll())
-                return NoContent();
-            
-            throw new Exception($"Upading user {id} failed on save");
         }
     }
 }

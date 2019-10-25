@@ -23,7 +23,9 @@ namespace QNTM.API.Controllers
             _mapper = mapper;
             _repo = repo;
         }
-
+        /// <summary>
+        /// Returns contact information of a singular active chat
+        /// </summary>
         [HttpGet("{id}", Name="GetChat")]
         public async Task<IActionResult> GetChat(int id)
         {
@@ -34,6 +36,9 @@ namespace QNTM.API.Controllers
             return Ok(chat);
         }
 
+        /// <summary>
+        /// Returns a list of all active chats the logged in user has.
+        /// </summary>
         [HttpGet("getchats")]
         public async Task<IActionResult> GetChats(int userId)
         {
@@ -42,11 +47,14 @@ namespace QNTM.API.Controllers
             
             var chatFromRepo = await _repo.GetActiveChats(userId);
 
-            var activeChats = _mapper.Map<IEnumerable<ChatForCreationDto>>(chatFromRepo);
+            var activeChats = _mapper.Map<IEnumerable<ChatForReturnDto>>(chatFromRepo);
 
             return Ok(activeChats);
         }
 
+        /// <summary>
+        /// Creates an instance of an active chat and adds it to the authorized user's chat history
+        /// </summary>
         [HttpPost]
         public async Task<IActionResult> addActiveChat(int userId, [FromBody]ChatForCreationDto chatForCreationDto)
         {
