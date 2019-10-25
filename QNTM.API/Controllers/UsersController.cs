@@ -48,7 +48,7 @@ namespace QNTM.API.Controllers
 
             var userToReturn = _mapper.Map<UserForDetailDto>(user);
 
-            return Ok(user);
+            return Ok(userToReturn);
         }
 
         /// <summary>
@@ -77,9 +77,24 @@ namespace QNTM.API.Controllers
 
             var userToReturn = _mapper.Map<UserForDetailDto>(user);
 
-            return Ok(user);
+            return Ok(userToReturn);
         }
 
+        /// <summary>
+        /// Returns an updated user model for the currently logged in user. For use after db context updating actions.
+        /// </summary>
+        [HttpGet("{id}/update")]
+        public async Task<IActionResult> GetUpdatedUser(int id)
+        {
+            if (id != int.Parse(User.FindFirst(ClaimTypes.NameIdentifier).Value))
+                return Unauthorized();
+
+            var user = await _repo.GetUser(id);
+
+            var userToReturn = _mapper.Map<UserForChatDto>(user);
+
+            return Ok(userToReturn);
+        }
 
         /// <summary>
         /// Updates the data of a user in the database

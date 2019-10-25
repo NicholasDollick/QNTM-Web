@@ -9,6 +9,7 @@ namespace QNTM.API.Dtos
         public string Username { get; set; }
         public string PublicKey { get; set; }
         public string PhotoUrl { get; set; }
+        public ICollection<ChatForReturnDto> ActiveChats { get; set; }
         public ICollection<PhotoForReturnDto> Photos { get; set; }
     }
 }
