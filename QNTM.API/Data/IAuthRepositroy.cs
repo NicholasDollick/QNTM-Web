@@ -8,5 +8,6 @@ namespace QNTM.API.Data
         Task<User> Register(User user, string password, string publicKey, string keyHash);
         Task<User> Login(string username, string password);
         Task<bool> UserExists(string username);
+        Task<User> SetDefaultImage(User user);
     }
 }

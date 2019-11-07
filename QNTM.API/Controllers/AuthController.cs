@@ -23,11 +23,13 @@ namespace QNTM.API.Controllers
         private readonly IAuthRepositroy _repo;
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
-        public AuthController(IAuthRepositroy repo, IConfiguration config, IMapper mapper)
+        private readonly IQNTMRepository _qntmRepo;
+        public AuthController(IAuthRepositroy repo, IConfiguration config, IMapper mapper, IQNTMRepository qntmRepo)
         {
             _mapper = mapper;
             _config = config;
             _repo = repo;
+            _qntmRepo = qntmRepo;
         }
 
 
@@ -48,6 +50,10 @@ namespace QNTM.API.Controllers
             };
 
             var createdUser = await _repo.Register(userToCreate, userForRegisterDto.Password, userForRegisterDto.PublicKey, userForRegisterDto.PrivateKeyHash);
+
+            var userFromRepo = await _qntmRepo.GetUser(createdUser.Id);
+
+            var updatedUser = await _repo.SetDefaultImage(userFromRepo);
 
             return StatusCode(201);
         }

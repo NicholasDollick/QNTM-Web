@@ -2,15 +2,20 @@ using System.Threading.Tasks;
 using QNTM.API.Models;
 using BCrypt;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using QNTM.API.Helpers;
+using System;
 
 namespace QNTM.API.Data
 {
     public class AuthRepository : IAuthRepositroy
     {
-        private readonly DataContext _context;            
-        public AuthRepository(DataContext context)
+        private readonly DataContext _context;
+        private readonly IOptions<CloudinarySettings> _cloudinarySettings;            
+        public AuthRepository(DataContext context, IOptions<CloudinarySettings> cloudinarySettings)
         {
             _context = context;  
+            _cloudinarySettings = cloudinarySettings;
         }
         
         public async Task<User> Login(string username, string password)
@@ -56,6 +61,30 @@ namespace QNTM.API.Data
             if(await _context.Users.AnyAsync(x => x.Username == username))
                 return true;
             return false;
+        }
+
+        public async Task<User> SetDefaultImage(User user)
+        {
+            string[] defaultImageColors = {
+                "orange",
+                "seafoam",
+                "red",
+                "gray",
+                "purple",
+                "green",
+                "darkblue"
+                };
+            var defaultPhoto = new Photo();
+            var random = new Random();
+            var randomColor = random.Next(0, defaultImageColors.Length);
+            defaultPhoto.Url = _cloudinarySettings.Value.DefaultImageUrl + defaultImageColors[randomColor] + ".png";
+            defaultPhoto.IsMain = true;
+
+            user.Photos.Add(defaultPhoto);
+
+            await _context.SaveChangesAsync();
+
+            return user;
         }
     }
 }
