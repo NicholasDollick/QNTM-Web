@@ -130,7 +130,7 @@ namespace QNTM.API
             app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:4200"));
             app.UseAuthentication();
             app.UseSignalR(routes => {
-                routes.MapHub<ChatHub>("/chat");
+                routes.MapHub<ChatHub>("/hubs/chat");
                 routes.MapHub<PrivateMessageHub>("/pm");
                 routes.MapHub<PresenceHub>("/hubs/presence");
             });

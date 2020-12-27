@@ -17,7 +17,11 @@ namespace QNTM.API.Data
         Task<Message> GetMessage(int id);
         Task<PagedList<Message>> GetMessagesForUser(MessageParams messageParams);
         Task<IEnumerable<Message>> GetMessageThread(int userId, int recipientId);
+        Task<IEnumerable<Message>> GetMessageThread(string sender, string recipient);
         Task<IEnumerable<ActiveChat>> GetActiveChats(int userId);
         Task<ActiveChat> GetChat(int id);
+
+        void AddMessage(Message message);
+        void DeleteMessage(Message message);
     }
 }

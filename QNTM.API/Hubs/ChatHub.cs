@@ -1,33 +1,91 @@
 using System;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.SignalR;
 using QNTM.API.Data;
+using QNTM.API.Dtos;
 using QNTM.API.Helpers;
+using QNTM.API.Models;
 
 namespace QNTM.API.Hubs
 {
     public class ChatHub : Hub
     {
-        /* 
-        public override Task OnConnectedAsync()
+        private readonly IQNTMRepository _repo;
+        private readonly IMapper _mapper;
+        public ChatHub(IQNTMRepository repo, IMapper mapper)
         {
-            UserHandler.ConnectionIds.Add(Context.ConnectionId);
-            return base.OnConnectedAsync();
+            _mapper = mapper;
+            _repo = repo;
         }
 
-        public override Task OnDisconnectedAsync(Exception exception)
+        public override async Task OnConnectedAsync()
         {
-            UserHandler.ConnectionIds.Remove(Context.ConnectionId);
-            return base.OnDisconnectedAsync(exception);
+            var httpContext = Context.GetHttpContext();
+            var otherUser = httpContext.Request.Query["user"].ToString();
+            var groupName = GetGroupName(Context.User.Identity.Name, otherUser);
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
+
+            var messages = await _repo.GetMessageThread(Context.User.Identity.Name, otherUser);
+
+            await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }
 
-        */
-
-        public async Task SendMessage(string user, string message)
+        public override async Task OnDisconnectedAsync(Exception exception)
         {
-            await Clients.All.SendAsync("RecievedMessage", user, message);
+            await base.OnDisconnectedAsync(exception);
         }
+
+        public async Task SendMessage(MessageForCreationDto messageForCreationDto)
+        {
+            var username = Context.User.Identity.Name;
+
+            if(username == messageForCreationDto.RecipientUsername.ToLower())
+                throw new HubException("You cant send a message to yourself");
+            
+            var sender = await _repo.GetUser(username);
+            var recipient = await _repo.GetUser(messageForCreationDto.RecipientUsername);
+
+            if (recipient == null)
+                throw new HubException("User not found");
+            
+            var message= new Message
+            {
+              Sender = sender,
+              Recipient = recipient,
+              SenderUsername = sender.Username,
+              RecipientUsername = recipient.Username,
+              Content = messageForCreationDto.Content
+            };
+
+            _repo.AddMessage(message);
+
+            Console.WriteLine(message);
+            if(await _repo.SaveAll()) 
+            {
+                var group = GetGroupName(sender.Username, recipient.Username);
+                await Clients.Group(group).SendAsync("NewMessage", _mapper.Map<MessageToReturnDto>(message));
+
+            }
+        }
+
+        private string GetGroupName(string caller, string other)
+        {
+            var stringComapre = string.CompareOrdinal(caller, other) < 0;
+
+            return stringComapre ? $"{caller}-{other}" : $"{other}-{caller}";
+            
+        }
+
+
+
+
+
+
+
+
 
 
         public void SendToAll(string name, string message)

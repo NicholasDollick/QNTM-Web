@@ -79,6 +79,17 @@ namespace QNTM.API.Data
             return messages;
         }
 
+        public async Task<IEnumerable<Message>> GetMessageThread(string sender, string recipient)
+        {
+            var messages = await _context.Messages.Include(u => u.Sender)
+                .Include(u => u.Recipient)
+                .Where(m => m.RecipientUsername == sender && m.SenderUsername == recipient 
+                    || m.RecipientUsername == recipient && m.SenderUsername == sender)
+                    .OrderByDescending(m => m.MessageSent)
+                    .ToListAsync();
+            return messages;
+        }
+
         public async Task<bool> SaveAll()
         {
             return await _context.SaveChangesAsync() > 0;
@@ -108,6 +119,16 @@ namespace QNTM.API.Data
             var chat = await _context.ActiveChats.FirstOrDefaultAsync(c => c.Id == id);
 
             return chat;
+        }
+
+        public void AddMessage(Message message)
+        {
+            _context.Messages.Add(message);
+        }
+
+        public void DeleteMessage(Message message)
+        {
+            _context.Messages.Remove(message);
         }
     }
 }
