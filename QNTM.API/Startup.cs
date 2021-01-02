@@ -77,13 +77,13 @@ namespace QNTM.API
                         return Task.CompletedTask;
 
 
-                        if ( (context.Request.Path.Value.StartsWith("/hubs")) 
-                            || (context.Request.Path.Value.StartsWith("/pm")) 
-                            && context.Request.Query.TryGetValue("token", out StringValues token))
-                        {
-                            context.Token = token;
-                        }
-                        return Task.CompletedTask;
+                        // if ( (context.Request.Path.Value.StartsWith("/hubs")) 
+                        //     || (context.Request.Path.Value.StartsWith("/pm")) 
+                        //     && context.Request.Query.TryGetValue("token", out StringValues token))
+                        // {
+                        //     context.Token = token;
+                        // }
+                        // return Task.CompletedTask;
                     }, OnAuthenticationFailed = context => {
                         var ex = context.Exception;
                         return Task.CompletedTask;

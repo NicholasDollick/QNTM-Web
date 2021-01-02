@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -63,6 +64,7 @@ namespace QNTM.API.Data
         public async Task<User> GetUser(string username)
         {
             // usernames are unique, so lowercasing both queries removes uncertainty from end user's typing.
+            Console.WriteLine($"Attempting to fetch username: {username}");
             var user = await _context.Users.Include(p => p.Photos).FirstOrDefaultAsync(u => u.Username.ToLower().Equals(username.ToLower()));
 
             return user;
