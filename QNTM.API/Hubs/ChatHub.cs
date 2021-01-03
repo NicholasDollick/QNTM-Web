@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.SignalR;
 using QNTM.API.Data;
 using QNTM.API.Dtos;
 using QNTM.API.Models;
+using QNTM.API.Extensions;
 
 namespace QNTM.API.Hubs
 {
@@ -22,12 +23,12 @@ namespace QNTM.API.Hubs
         {
             var httpContext = Context.GetHttpContext();
             var otherUser = httpContext.Request.Query["user"].ToString();
-            var groupName = GetGroupName(Context.User.Identity.Name, otherUser);
+            var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
             var messages = await _repo.GetMessageThread(Context.User.Identity.Name, otherUser);
-            Console.WriteLine("Messages would be fetched");
+            Console.WriteLine($"Messages would be fetched for {groupName}");
             await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }
 
@@ -36,15 +37,20 @@ namespace QNTM.API.Hubs
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendMessage(MessageForCreationDto messageForCreationDto)
+        public async Task SendMessage(CreateMessageDto messageForCreationDto)
         {
             Console.WriteLine("Inside the send message function");
-            var username = Context.User.Identity.Name;
+            Console.WriteLine(Context.User.Identity);
+            var username = Context.User.GetUsername();
+            Console.WriteLine($"Username found in context: {username}");
+            Console.WriteLine($"Content received in hub: {messageForCreationDto.Content}");
+            if(username == null)
+                throw new HubException("User error detected");
 
             if(username == messageForCreationDto.RecipientUsername.ToLower())
                 throw new HubException("You can't send a message to yourself");
             
-            Console.WriteLine($"Username received in hub: {messageForCreationDto.SenderUsername}");
+           
             var sender = await _repo.GetUser(username);
             Console.WriteLine("fetched sender");
             var recipient = await _repo.GetUser(messageForCreationDto.RecipientUsername);
@@ -53,7 +59,7 @@ namespace QNTM.API.Hubs
             if (recipient == null)
                 throw new HubException("User not found");
             
-            var message= new Message
+            var message = new Message
             {
               Sender = sender,
               Recipient = recipient,
@@ -68,7 +74,7 @@ namespace QNTM.API.Hubs
             if(await _repo.SaveAll()) 
             {
                 var group = GetGroupName(sender.Username, recipient.Username);
-                await Clients.Group(group).SendAsync("NewMessage", _mapper.Map<MessageToReturnDto>(message));
+                await Clients.Group(group).SendAsync("NewMessage", _mapper.Map<MessageDto>(message));
             }
             else
                 Console.WriteLine("Something fucked up while trying to save");

@@ -27,6 +27,11 @@ namespace QNTM.API.Helpers
             CreateMap<ActiveChat, ChatForCreationDto>();
             CreateMap<PhotoForCreationDto, Photo>();
             CreateMap<Photo, PhotoForReturnDto>();
+            CreateMap<Message, MessageDto>()
+                    .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => 
+                            src.Sender.Photos.FirstOrDefault(x => x.IsMain).Url))
+                    .ForMember(dest => dest.SenderPhotoUrl, opt => opt.MapFrom(src => 
+                            src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));
         }
     }
 }

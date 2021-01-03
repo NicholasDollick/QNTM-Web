@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
@@ -12,6 +13,7 @@ using Newtonsoft.Json;
 using QNTM.API.Data;
 using QNTM.API.Dtos;
 using QNTM.API.Helpers;
+using QNTM.API.Interfaces;
 using QNTM.API.Models;
 
 namespace QNTM.API.Controllers
@@ -24,6 +26,9 @@ namespace QNTM.API.Controllers
         private readonly IConfiguration _config;
         private readonly IMapper _mapper;
         private readonly IQNTMRepository _qntmRepo;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly ITokenService _tokenService;
         public AuthController(IAuthRepositroy repo, IConfiguration config, IMapper mapper, IQNTMRepository qntmRepo)
         {
             _mapper = mapper;
@@ -113,8 +118,10 @@ namespace QNTM.API.Controllers
 
             var claims = new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
-                new Claim(ClaimTypes.Name, userFromRepo.Username)
+                // new Claim(ClaimTypes.NameIdentifier, userFromRepo.Id.ToString()),
+                // new Claim(ClaimTypes.Name, userFromRepo.Username),
+                new Claim(JwtRegisteredClaimNames.NameId, userFromRepo.Id.ToString()),
+                new Claim(JwtRegisteredClaimNames.UniqueName, userFromRepo.Username),
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config.GetSection("AppSettings:Token").Value));
@@ -124,7 +131,7 @@ namespace QNTM.API.Controllers
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(claims),
-                Expires = DateTime.Now.AddDays(1),
+                Expires = DateTime.Now.AddDays(7),
                 SigningCredentials = creds
             };
 
