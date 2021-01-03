@@ -13,37 +13,49 @@ namespace QNTM.API.Hubs
     {
         private readonly IQNTMRepository _repo;
         private readonly IMapper _mapper;
-        public ChatHub(IQNTMRepository repo, IMapper mapper)
+        private readonly OnlineUsers _users;
+        public ChatHub(IQNTMRepository repo, IMapper mapper, OnlineUsers users)
         {
             _mapper = mapper;
             _repo = repo;
+            _users = users;
         }
 
         public override async Task OnConnectedAsync()
         {
             var httpContext = Context.GetHttpContext();
             var otherUser = httpContext.Request.Query["user"].ToString();
-            var groupName = GetGroupName(Context.User.GetUsername(), otherUser);
+
+            var user = httpContext.Request.Query["from"].ToString();
+
+            var groupName = GetGroupName(user, otherUser);
 
             await Groups.AddToGroupAsync(Context.ConnectionId, groupName);
 
-            var messages = await _repo.GetMessageThread(Context.User.Identity.Name, otherUser);
+            var messages = await _repo.GetMessageThread(user, otherUser);
             Console.WriteLine($"Messages would be fetched for {groupName}");
+            foreach(var message in messages)
+            {
+                Console.WriteLine($"from {message.SenderUsername} to {message.RecipientUsername}: {message.Content}");
+            }
             await Clients.Group(groupName).SendAsync("ReceiveMessageThread", messages);
         }
 
+        // an error in the chat component is calling this instantly without tossing an
+        // exception...
         public override async Task OnDisconnectedAsync(Exception exception)
         {
+            Console.WriteLine("IM SHUTTING DOWN");
+            Console.WriteLine(exception);
             await base.OnDisconnectedAsync(exception);
         }
 
         public async Task SendMessage(CreateMessageDto messageForCreationDto)
         {
             Console.WriteLine("Inside the send message function");
-            Console.WriteLine(Context.User.Identity);
-            var username = Context.User.GetUsername();
-            Console.WriteLine($"Username found in context: {username}");
-            Console.WriteLine($"Content received in hub: {messageForCreationDto.Content}");
+
+            var username = messageForCreationDto.SenderUsername;
+
             if(username == null)
                 throw new HubException("User error detected");
 
@@ -67,7 +79,7 @@ namespace QNTM.API.Hubs
               RecipientUsername = recipient.Username,
               Content = messageForCreationDto.Content
             };
-            Console.WriteLine($"Created Message: {message}");
+            Console.WriteLine($"Created Message: {message.Content}");
             _repo.AddMessage(message);
             Console.WriteLine("message added to repo");
 
