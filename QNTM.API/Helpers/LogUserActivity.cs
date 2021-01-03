@@ -19,7 +19,7 @@ namespace QNTM.API.Helpers
             var userId = resultContext.HttpContext.User.GetUserId();
             var uow = resultContext.HttpContext.RequestServices.GetService<IUnitOfWork>();
             var user = await uow.UserRepository.GetUserByIdAsync(userId);
-            user.LastActive = DateTime.UtcNow;
+            // user.LastActive = DateTime.UtcNow;
             await uow.Complete();
         }
     }

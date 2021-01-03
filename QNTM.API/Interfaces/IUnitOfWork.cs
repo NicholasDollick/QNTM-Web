@@ -1,3 +1,5 @@
+using System.Threading.Tasks;
+
 namespace QNTM.API.Interfaces
 {
     public interface IUnitOfWork

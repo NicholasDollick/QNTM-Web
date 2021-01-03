@@ -23,6 +23,8 @@ using System.IO;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Primitives;
 using QNTM.API.Helpers;
+using QNTM.API.Interfaces;
+using QNTM.API.Services;
 
 namespace QNTM.API
 {
@@ -47,6 +49,9 @@ namespace QNTM.API
             services.AddAutoMapper();
             services.AddCors();
             services.AddSignalR();
+            services.AddScoped<LogUserActivity>();
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddScoped<ITokenService, TokenService>();
             services.AddScoped<IAuthRepositroy, AuthRepository>();
             services.AddScoped<IQNTMRepository, QNTMRepository>();
             services.AddScoped<IUserHandler, UserHandler>();

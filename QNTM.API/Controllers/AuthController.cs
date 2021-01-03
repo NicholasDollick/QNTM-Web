@@ -1,5 +1,6 @@
 using System;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
@@ -60,6 +62,10 @@ namespace QNTM.API.Controllers
 
             var updatedUser = await _repo.SetDefaultImage(userFromRepo);
 
+
+            // in the future this can juse return the DTO and be treated as a login
+            // saves the user time and effort
+            // TODO: refactor to reflect this change
             return StatusCode(201);
         }
 
@@ -141,8 +147,26 @@ namespace QNTM.API.Controllers
 
             var user = _mapper.Map<UserForChatDto>(userFromRepo);
 
-            return Ok(new { token = tokenHandler.WriteToken(token), user, priv = userFromRepo.PrivateKeyHash });
-        }
+            // var user = await _userManager.Users
+            //     .Include(p => p.Photos)
+            //     .SingleOrDefaultAsync(x => x.Username == userForLoginDto.Username.ToLower());
 
+            //  if (user == null)
+            //     return Unauthorized();
+
+            // var result = await _signInManager
+            //     .CheckPasswordSignInAsync(user, userForLoginDto.Password, false);
+
+            // if (!result.Succeeded)
+            //     return Unauthorized();
+
+            return Ok(new { token = tokenHandler.WriteToken(token), user, priv = userFromRepo.PrivateKeyHash });
+            // return Ok(new {
+            //     user,
+            //     Token = await _tokenService.CreateToken(user),
+            //     PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
+            //     Username = user.Username
+            // });
+        }
     }
 }
